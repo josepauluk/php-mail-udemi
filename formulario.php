@@ -14,15 +14,70 @@ if($_POST){
     }
 
     if(isset($_POST['correo'])){
-        $usuario = filter_var(trim($_POST['correo']), FILTER_VALIDATE_EMAIL);
+        $correo = filter_var(trim($_POST['correo']), FILTER_VALIDATE_EMAIL);
     }
 
     if(isset($_POST['mensaje'])){
-        $usuario = filter_var(trim($_POST['mensaje']), FILTER_SANITIZE_STRING);
+        $mensaje = filter_var(trim($_POST['mensaje']), FILTER_SANITIZE_STRING);
     }
 
+    // Verificación
     if(empty($usuario)){
-        echo json_encode('usuario en blanco');
+        echo json_encode(array(
+            'error' => true,
+            'campo' => 'usuario'
+        ));
+        return;
     }
+
+    if(empty($correo)){
+        echo json_encode(array(
+            'error' => true,
+            'campo' => 'correo'
+        ));
+        return;
+    }
+
+    if(empty($mensaje)){
+        echo json_encode(array(
+            'error' => true,
+            'campo' => 'mensaje'
+        ));
+        return;
+    }
+
+
+    // Cuerpo del mensaje
+    $cuerpo = 'Usuario: ' . $usuario . '<br>';
+    $cuerpo .= 'Email ' . $correo . '<br>';
+    $cuerpo .= 'Mensaje ' . $mensaje . '<br>';
+    
+    // Dirección
+    $destinatario = 'contacto@josepauluk.com'; //Nuestro correo
+    $asunto = 'Mensaje de mi sitio web';
+    $headers = 'MIME-Version: 1.0' . "\r\n" . 'Content-type: text/html; charset=utf-8' . "\r\n" . 'Form: ' . $correo . "\r\n";
+
+    if(mail($destinatario, $asunto, $cuerpo, $headers)){
+
+        // -- Mensajes --
+        echo json_encode(array(
+            'error' => false,
+            'campo' => 'exito'
+        ));
+
+    } else {
+        echo json_encode(array(
+            'error' => true,
+            'campo' => 'mail'
+        ));
+    }
+
+
+    // -- Mensajes --
+} else {
+    echo json_encode(array(
+        'error' => true,
+        'campo' => 'post'
+    ));
 }
 // echo json_encode($usuario);

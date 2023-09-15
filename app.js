@@ -42,7 +42,33 @@ formulario.addEventListener('submit', (e) => {
         body: data
     }) 
         .then(res => res.json())
-        .then(datos => console.log(datos))
+        .then(datos => {
+            console.log(datos)
+
+            if(datos.error && datos.campo === 'usuario') {
+                campoError(usuario)
+                return
+            }
+            campoValido(usuario)
+
+            if(datos.error && datos.campo === 'correo') {
+                campoError(correo)
+                return
+            }
+            campoValido(correo)
+
+            if(datos.error && datos.campo === 'mensaje') {
+                campoError(mensaje)
+                return
+            }
+            campoValido(mensaje)
+
+            if(!datos.error){
+                limpiarFormulario()
+                campoValido(boton)
+            }
+
+        })
         .catch(e => console.log(e))
 
 })
@@ -56,4 +82,13 @@ const campoError = (campo) => {
 const campoValido = (campo) => {
     campo.classList.remove('is-invalid')
     campo.classList.add('is-valid')
+}
+
+const limpiarFormulario = () => {
+    console.log('mensaje enviado con éxito')
+    formulario.reset()
+    usuario.classList.remove('is-valid')
+    correo.classList.remove('is-valid')
+    mensaje.classList.remove('is-valid')
+
 }
